@@ -56,8 +56,6 @@ namespace SpkConsole
     /// <returns></returns>
     static string CreateStream( Account account )
     {
-      SpeckleCore.SpeckleInitializer.Initialize();
-
       Console.WriteLine( "Hello Speckle! We will now create a sample stream." );
 
       Console.WriteLine( "Please enter a stream name:" );

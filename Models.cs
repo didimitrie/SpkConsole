@@ -10,6 +10,7 @@ namespace SpkConsole
   /// <summary>
   /// Base class. Inherits from a SpeckleObject.
   /// </summary>
+  [Serializable]
   public class Base : SpeckleObject
   {
     public int id;
@@ -18,6 +19,7 @@ namespace SpkConsole
   /// <summary>
   /// Just a sample node class. Has x, y, z float values.
   /// </summary>
+  [Serializable]
   public class Node : Base
   {
     public override string Type { get => base.Type + "/" + "TestNodeClass"; } // Note how to define the type of a custom speckle object!
@@ -28,6 +30,7 @@ namespace SpkConsole
   /// <summary>
   /// A quad class.
   /// </summary>
+  [Serializable]
   public class Quad : Base
   {
     public override string Type { get => base.Type + "/" + "TestQuadClass"; } // Note how to define the type of a custom speckle object!

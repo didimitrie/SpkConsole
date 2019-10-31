@@ -9,13 +9,18 @@ namespace SpkConsole
 {
   partial class Program
   {
-    static void Main(string[] args)
+    static void Main( string[ ] args )
     {
-      var account = GetAccount();
+      // always call the initialisation function to make sure kits are loaded.
+      SpeckleCore.SpeckleInitializer.Initialize();
 
-      var streamId = CreateStream( account );
+      //var account = GetAccount();
 
-      GetStream( streamId );
+      //var streamId = CreateStream( account );
+
+      //GetStream( streamId );
+
+      SaveManyObjectsTest( 1000 );
     }
 
     /// <summary>
@@ -26,25 +31,31 @@ namespace SpkConsole
     {
       Console.WriteLine( "What email address should we use to search for local accounts?" );
       var email = Console.ReadLine();
-
-      var accounts = LocalContext.GetAccountsByEmail( email );
-      if ( accounts.Count == 0 )
+      try
       {
-        Console.WriteLine( "No account found. Please try again!" );
-        return GetAccount();
+        return LocalContext.GetDefaultAccount();
       }
-
-      Console.WriteLine( String.Format( "Found {0} accounts. Which one should we use? (0 - {0})", accounts.Count ) );
-      int i = 0;
-      foreach (var acc in accounts)
+      catch
       {
-        Console.WriteLine( String.Format( "{0} : {1} at {2}", i++, acc.Email, acc.RestApi ) );
-      }
+        var accounts = LocalContext.GetAccountsByEmail( email );
+        if ( accounts.Count == 0 )
+        {
+          Console.WriteLine( "No account found. Please try again!" );
+          return GetAccount();
+        }
 
-      var selIndex = System.Convert.ToInt32( Console.ReadLine() );
-      return accounts[ selIndex ];
+        Console.WriteLine( String.Format( "Found {0} accounts. Which one should we use? (0 - {0})", accounts.Count ) );
+        int i = 0;
+        foreach ( var acc in accounts )
+        {
+          Console.WriteLine( String.Format( "{0} : {1} at {2}", i++, acc.Email, acc.RestApi ) );
+        }
+
+        var selIndex = System.Convert.ToInt32( Console.ReadLine() );
+        return accounts[ selIndex ];
+      }
     }
 
-    
+
   }
 }

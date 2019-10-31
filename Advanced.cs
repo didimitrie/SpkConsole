@@ -10,7 +10,74 @@ namespace SpkConsole
   partial class Program
   {
 
-    public IEnumerable<SpecklePlaceholder> SaveManyObjects(Account account, IEnumerable<SpeckleObject> objects)
+    static void SaveManyObjectsTest( int numObjects )
+    {
+      if ( numObjects > 50000 )
+      {
+        Console.WriteLine( "Let's think about this: is this the best way to do it? Y/N" );
+        var answer = Console.ReadLine();
+        if ( answer == "N" )
+        {
+          return;
+        }
+        else
+        {
+          Console.WriteLine( "oh well, ok... will go ahead." );
+        }
+      }
+
+      var nodes = new List<Node>();
+      for ( int i = 0; i < numObjects; i++ )
+      {
+        nodes.Add( new Node { x = i, y = i % 2, z = i % 3 } );
+      }
+
+      var account = GetAccount();
+      var savedObjects = SaveManyObjects( account, nodes );
+
+      var client = new SpeckleApiClient( account.RestApi, false, "console_app" );
+      client.AuthToken = account.Token;
+
+      Console.WriteLine( "Please enter a stream name:" );
+      var name = Console.ReadLine();
+
+      var myStream = new SpeckleStream()
+      {
+        Objects = savedObjects.Cast<SpeckleObject>().ToList(),
+        Name = name != "" ? name : "Console test stream",
+        Description = "This stream was created from a .net console program. Easy peasy.",
+        Tags = new List<string> { "example", "console-test" },
+      };
+
+      try
+      {
+        // save the stream.
+        var result = client.StreamCreateAsync( myStream ).Result;
+
+        // profit
+        Console.WriteLine( String.Format( "Succesfully created a stream! It's id is {0}. Rock on! Check it out at {1}/streams/{0}", result.Resource.StreamId, account.RestApi ) );
+        Console.WriteLine( "Press any key to continue." );
+
+        System.Diagnostics.Process.Start( String.Format( "{1}/streams/{0}", result.Resource.StreamId, account.RestApi ) );
+        Console.ReadLine();
+      }
+      catch ( Exception e )
+      {
+        Console.WriteLine( "Bummer - something went wrong:" );
+        Console.WriteLine( e.Message );
+        Console.WriteLine( "Press any key to continue." );
+        Console.ReadLine();
+      }
+
+    }
+
+    /// <summary>
+    /// Orchestrates the saving of many objects. 
+    /// </summary>
+    /// <param name="account"></param>
+    /// <param name="objects"></param>
+    /// <returns></returns>
+    static IEnumerable<SpecklePlaceholder> SaveManyObjects( Account account, IEnumerable<SpeckleObject> objects )
     {
       Console.WriteLine( String.Format( "Saving {0} objects.", objects.Count() ) );
       Console.WriteLine();
@@ -21,7 +88,7 @@ namespace SpkConsole
       // NOTE: Will change in Speckle 2.0
 
       var objectUpdatePayloads = new List<List<SpeckleObject>>();
-      long totalBucketSize = 0,  currentBucketSize = 0;
+      long totalBucketSize = 0, currentBucketSize = 0;
       var currentBucketObjects = new List<SpeckleObject>();
       var allObjects = new List<SpeckleObject>();
 
@@ -34,9 +101,6 @@ namespace SpkConsole
 
         if ( currentBucketSize > 5e5 ) // restrict max to ~500kb;
         {
-          Console.Write( String.Format( "Made {0} payloads.", objectUpdatePayloads.Count ) );
-          Console.CursorLeft =  0;
-
           objectUpdatePayloads.Add( currentBucketObjects );
           currentBucketObjects = new List<SpeckleObject>();
           currentBucketSize = 0;
