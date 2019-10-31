@@ -20,7 +20,7 @@ namespace SpkConsole
 
       //GetStream( streamId );
 
-      SaveManyObjectsTest( 1000 );
+      CreateStreamWithManyObjects( 10000 );
     }
 
     /// <summary>

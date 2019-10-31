@@ -9,8 +9,11 @@ namespace SpkConsole
 {
   partial class Program
   {
-
-    static void SaveManyObjectsTest( int numObjects )
+    /// <summary>
+    /// Creates a stream with many objects. Use this as a reference for how to save arbitrarily large numbers of objects. 
+    /// </summary>
+    /// <param name="numObjects">how many objects to create.</param>
+    static void CreateStreamWithManyObjects( int numObjects )
     {
       if ( numObjects > 50000 )
       {
@@ -123,9 +126,11 @@ namespace SpkConsole
       client.AuthToken = account.Token;
 
       var i = 0;
+      var totalObjs = 0;
       foreach ( var payload in objectUpdatePayloads )
       {
-        Console.Write( String.Format( "Sending payload #{0} ({1} objects) ...", i++, payload.Count ) );
+        totalObjs += payload.Count;
+        Console.Write( String.Format( "Sending payload #{0} ({1} objects, total saved {2}) ...", i++, payload.Count, totalObjs ) );
 
         var result = client.ObjectCreateAsync( payload ).Result.Resources;
         foreach ( var placehholder in result )
