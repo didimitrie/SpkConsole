@@ -7,18 +7,12 @@ using SpeckleCore;
 
 namespace SpkConsole
 {
-  partial class Program
+  public partial class Program
   {
     static void Main( string[ ] args )
     {
       // always call the initialisation function to make sure kits are loaded.
       SpeckleCore.SpeckleInitializer.Initialize();
-
-      //var account = GetAccount();
-
-      //var streamId = CreateStream( account );
-
-      //GetStream( streamId );
 
       CreateStreamWithManyObjects( 10000 );
     }
@@ -27,7 +21,7 @@ namespace SpkConsole
     /// Gets an account from the existing ones.
     /// </summary>
     /// <returns></returns>
-    static Account GetAccount( )
+    public static Account GetAccount( )
     {
       Console.WriteLine( "What email address should we use to search for local accounts?" );
       var email = Console.ReadLine();
