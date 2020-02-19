@@ -88,8 +88,6 @@ namespace SpkWsExample
 
       WebsocketClient.OnOpen += (sender, e) =>
       {
-        Dictionary<string, object> message = new Dictionary<string, object>();
-
         var eventData = new
         {
           eventName = "broadcast",
@@ -102,7 +100,6 @@ namespace SpkWsExample
             source="random client"
           }
         };
-
 
         WebsocketClient.Send(JsonConvert.SerializeObject(eventData));
         Console.WriteLine("just sent: " + JsonConvert.SerializeObject(eventData));
